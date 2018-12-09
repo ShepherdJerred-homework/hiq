@@ -1,0 +1,12 @@
+9->7 1->9 3->1 6->4 A->8 1->9 8->A B->9 D->B G->4 E->G H->F I->6 K->I M->8 7->9 4->G Q->B 6->I S->Q P->R Y->Q I->V W->Y Y->Q R->P U->H H->F T->G G->E L->7
+A->8 1->9 2->A G->4 7->9 4->G B->9 3->B C->A 9->B I->6 G->I E->G N->9 L->N P->M Q->B 6->I J->H S->Q D->S W->N M->P P->R S->Q X->P P->R Y->Q R->P P->A A->8
+1->9 3->1 6->4 H->5 4->6 8->A B->3 D->B A->C M->8 7->9 G->4 1->9 L->7 P->M Q->B K->I S->Q W->N M->P Q->N X->P Y->Q I->V N->Q V->I I->6 3->B C->A A->8 7->9
+2->A H->5 8->A 1->9 5->H C->A 3->B A->8 7->9 G->4 E->G I->6 N->9 4->G G->I L->N P->M Q->B 6->I J->H S->Q D->S W->N M->P P->R S->Q X->P P->R Y->Q R->P P->A
+3->B 1->3 4->6 G->4 7->9 4->G B->9 3->B C->A 9->B I->6 G->I E->G J->H G->I Q->B 6->I N->Q L->N R->P P->M W->N M->P Y->Q P->R S->Q D->S X->P P->R S->Q Q->B
+H->F 4->G 5->H 7->9 C->A 3->B 1->3 A->8 I->6 3->B G->I E->G I->6 K->I N->9 8->A L->N Q->B A->C D->B 6->I S->Q P->R T->G Y->Q I->V W->Y Y->Q R->P U->H H->F
+4->G 6->4 1->9 3->1 G->4 1->9 E->G G->4 7->9 4->G B->9 D->B G->4 I->6 K->I I->G N->9 4->G L->N P->M V->I S->Q Q->B 6->I W->N G->T Y->W W->N M->P U->H I->G
+5->H 8->A 1->9 3->1 A->8 7->9 B->3 D->B G->4 1->9 E->G G->4 I->6 3->B K->I I->6 T->G L->N N->9 4->G G->I Q->B 6->I S->Q P->R Y->Q I->V W->Y Y->Q R->P U->H
+6->I 4->6 3->B 1->3 G->4 7->9 4->G B->9 D->B G->4 E->G H->F I->6 3->B K->I T->G F->H L->N P->A B->9 4->G G->T R->P W->N N->Q X->P P->R Y->Q I->V S->Q V->I
+9->N 1->9 3->1 6->4 4->G 7->9 A->8 C->A H->5 F->H I->G K->I L->7 7->9 G->4 1->9 Q->B S->Q U->H M->P P->A A->C D->B V->I I->6 6->4 4->G W->N G->T Y->W W->N
+A->P 2->A F->H 4->G 7->9 A->8 C->A 3->B A->C D->B H->F E->G I->6 K->I N->9 L->N Q->B 6->I S->Q P->R T->G G->4 1->9 8->A Y->Q I->V W->Y Y->Q R->P U->H A->P
+B->Q 3->B 1->3 4->6 6->I 9->B 7->9 C->A 9->B I->6 3->B G->I E->G I->6 N->9 L->N P->M V->I J->H S->Q D->S W->N M->P P->A 9->B 6->I I->V X->P Y->Q P->R S->Q
