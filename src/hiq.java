@@ -23,91 +23,105 @@ public class hiq {
         printWriter.close();
     }
 
-//    static String solveDFS(Board board, String s, HashSet<Board> states) {
-//        if (board.isPegInInitialLocation()) {
-//            return s;
-//        }
-//        Set<Move> moves = board.findPossibleMoves();
-//        for (Move move : moves) {
-//            Board newBoard = new Board(board);
-//            newBoard.doMove(move);
-//            if (!states.contains(newBoard)) {
-//                states.add(newBoard);
-//                String result = solveDFS(newBoard, s + String.format("%s->%s ", move.from, move.to), states);
-//                if (result != null) {
-//                    return result;
-//                }
-//            } else {
-////                System.out.println("Pruned");
-//            }
-//        }
-//        return null;
-//    }
-//
-//    static Output solveInputDFS(Input input) {
-//        Board initialBoard = new Board(7, 7, input.startingPosition);
-//        String solution = solveDFS(initialBoard, "", new HashSet<>());
-//        System.out.println(solution);
-//        return new Output(solution);
-//    }
-
-    static Output solveInputBFS(Input input) {
-        Board initialBoard = new Board(7, 7, input.startingPosition);
-        System.out.println(initialBoard.cellsToString());
-
-        Set<Board> set = new HashSet<>();
-        Queue<QueueEntry> queue = new LinkedList<>();
-
-        initialBoard.findPossibleMoves().forEach(move -> {
-            QueueEntry entry = new QueueEntry(new ArrayList<>(), move, new Board(initialBoard));
-            queue.add(entry);
-        });
-        set.add(initialBoard);
-
-        int lastSeenLow = 33;
-        List<Move> solution = null;
-        while (!queue.isEmpty()) {
-            QueueEntry entry = queue.poll();
-//            System.out.println(entry);
-            Board board = new Board(entry.board);
-//            System.out.println("BEFORE MOVE");
-//            System.out.println(entry.nextMove);
-//            System.out.println(board.cellsToString());
-            board.doMove(entry.nextMove);
-//            System.out.println("AFTER MOVE");
-//            System.out.println(board.numberOfPegs);
-//            System.out.println(board.cellsToString());
-            List<Move> moves = new ArrayList<>(entry.previousMoves);
-            moves.add(entry.nextMove);
-            if (entry.board.numberOfPegs < lastSeenLow) {
-                System.out.println("Number of pegs left: " + entry.board.numberOfPegs);
-                lastSeenLow = entry.board.numberOfPegs;
-                System.out.println("Entries in queue: " + queue.size());
-            }
+    static String solveDFS(Board board, String s, HashSet<BitSet> states) {
+        if (board.numberOfPegs == 1) {
             if (board.isPegInInitialLocation()) {
-                solution = moves;
-                break;
+                return s;
             } else {
-                if (set.contains(board)) {
-//                System.out.println("Pruned");
-                    continue;
-                } else {
-                    set.add(board);
-                }
-                board.findPossibleMoves().forEach(move -> {
-                    QueueEntry newEntry = new QueueEntry(moves, move, board);
-                    queue.add(newEntry);
-                });
+                states.add(board.toBitSet());
+                return null;
             }
         }
 
-        System.out.println(solution);
+        Set<Move> moves = board.findPossibleMoves();
+        for (Move move : moves) {
+            Board newBoard = new Board(board);
+//            System.out.println(newBoard.numberOfPegs);
+//            if (newBoard.numberOfPegs == 25) {
+//                System.out.println(newBoard.cellsToString());
+//                System.out.println(newBoard.findEmptyCells());
+//                System.out.println(newBoard.findPossibleMoves());
+//                System.exit(0);
+//            }
+            newBoard.doMove(move);
+            if (!states.contains(newBoard.toBitSet())) {
+                String result = solveDFS(new Board(newBoard), s + String.format("%s->%s ", board.coordinateCharacterMap.get(move.from), board.coordinateCharacterMap.get(move.to)), states);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+
+        states.add(board.toBitSet());
+        return null;
+    }
+
+    static Output solveInputDFS(Input input) {
+        Board initialBoard = new Board(7, 7, input.startingPosition);
+        String solution = solveDFS(initialBoard, "", new HashSet<>());
+        if (solution == null) {
+            solution = "No Solution for hole at " + initialBoard.emptySpace;
+        }
         return new Output(input.startingPosition, solution);
     }
 
+//    static Output solveInputBFS(Input input) {
+//        Board initialBoard = new Board(7, 7, input.startingPosition);
+//        System.out.println(initialBoard.cellsToString());
+//
+//        Set<BitSet> set = new HashSet<>();
+//        Queue<QueueEntry> queue = new LinkedList<>();
+//
+//        initialBoard.findPossibleMoves().forEach(move -> {
+//            QueueEntry entry = new QueueEntry(new ArrayList<>(), move, new Board(initialBoard));
+//            queue.add(entry);
+//        });
+//        set.add(initialBoard.toBitSet());
+//
+//        int lastSeenLow = 33;
+//        List<Move> solution = null;
+//        while (!queue.isEmpty()) {
+//            QueueEntry entry = queue.poll();
+////            System.out.println(entry);
+//            Board board = new Board(entry.board);
+////            System.out.println("BEFORE MOVE");
+////            System.out.println(entry.nextMove);
+////            System.out.println(board.cellsToString());
+//            board.doMove(entry.nextMove);
+////            System.out.println("AFTER MOVE");
+////            System.out.println(board.numberOfPegs);
+////            System.out.println(board.cellsToString());
+//            List<Move> moves = new ArrayList<>(entry.previousMoves);
+//            moves.add(entry.nextMove);
+//            if (entry.board.numberOfPegs < lastSeenLow) {
+//                System.out.println("Number of pegs left: " + entry.board.numberOfPegs);
+//                lastSeenLow = entry.board.numberOfPegs;
+//                System.out.println("Entries in queue: " + queue.size());
+//            }
+//            if (board.isPegInInitialLocation()) {
+//                solution = moves;
+//                break;
+//            } else {
+//                if (set.contains(board.toBitSet())) {
+////                System.out.println("Pruned");
+//                    continue;
+//                } else {
+//                    set.add(board.toBitSet());
+//                }
+//                board.findPossibleMoves().forEach(move -> {
+//                    QueueEntry newEntry = new QueueEntry(moves, move, board);
+//                    queue.add(newEntry);
+//                });
+//            }
+//        }
+//
+////        System.out.println(solution);
+//        return new Output(input.startingPosition, solution);
+//    }
+
     static List<Output> solveInputs(List<Input> inputs) {
         List<Output> outputs = new ArrayList<>();
-        inputs.forEach(input -> outputs.add(solveInputBFS(input)));
+        inputs.forEach(input -> outputs.add(solveInputDFS(input)));
         return outputs;
     }
 
@@ -197,24 +211,16 @@ public class hiq {
         }
     }
 
-    static class CellStateContainer {
-        final Board.CellState[][] cells;
-
-        CellStateContainer(Board.CellState[][] cells) {
-            this.cells = cells;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            CellStateContainer that = (CellStateContainer) o;
-            return Arrays.equals(cells, that.cells);
-        }
-
-        @Override
-        public int hashCode() {
-            return Arrays.hashCode(cells);
+    // https://stackoverflow.com/questions/27331175/java-bitset-comparison
+    static class BitSetComparator implements Comparator<BitSet> {
+        public int compare(BitSet l, BitSet r ) {
+            if (l.equals(r)) return 0;
+            BitSet xor = (BitSet) l.clone();
+            xor.xor(r);
+            int firstDifferent = xor.length()-1;
+            if (firstDifferent==-1)
+                return 0;
+            return r.get(firstDifferent) ? 1 : -1;
         }
     }
 
@@ -341,7 +347,7 @@ public class hiq {
         }
 
         private boolean isValidCoordinate(Coordinate coordinate) {
-            if (coordinate.row > 0 && coordinate.row < 6 && coordinate.col > 0 && coordinate.col < 6) {
+            if (coordinate.row > 0 && coordinate.row <= 6 && coordinate.col > 0 && coordinate.col <= 6) {
                 return !isUnused(coordinate);
             }
             return false;
@@ -432,6 +438,10 @@ public class hiq {
             cells[coordinate.row][coordinate.col] = newState;
         }
 
+        private CellState getCell(Coordinate coordinate) {
+            return cells[coordinate.row][coordinate.col];
+        }
+
         public String cellsToString() {
             StringBuilder sb = new StringBuilder();
             for (int row = 0; row < rows; row++) {
@@ -453,6 +463,157 @@ public class hiq {
                     '}';
         }
 
+        // https://ece.uwaterloo.ca/~dwharder/aads/Algorithms/Backtracking/Peg_solitaire/
+        public BitSet toBitSet() {
+            SortedSet<BitSet> bitSets = new TreeSet<>(new BitSetComparator());
+
+            int i = 0;
+            BitSet one = new BitSet(33);
+            for (int row = 0; row < rows; row++) {
+                for (int col = 0; col < columns; col++) {
+                    Coordinate coordinate = new Coordinate(row, col);
+                    CellState state = getCell(coordinate);
+                    if (state != CellState.UNUSED) {
+                        if (state == CellState.FILLED) {
+                            one.set(i, true);
+                        } else {
+                            one.set(i, false);
+                        }
+                        i++;
+                    }
+                }
+            }
+            bitSets.add(one);
+
+            i = 0;
+            BitSet two = new BitSet(33);
+            for (int col = columns - 1; col > 0; col--) {
+                for (int row = 0; row < rows; row++) {
+                    Coordinate coordinate = new Coordinate(row, col);
+                    CellState state = getCell(coordinate);
+                    if (state != CellState.UNUSED) {
+                        if (state == CellState.FILLED) {
+                            two.set(i, true);
+                        } else {
+                            two.set(i, false);
+                        }
+                        i++;
+                    }
+                }
+            }
+            bitSets.add(two);
+
+            i = 0;
+            BitSet three = new BitSet(33);
+            for (int row = rows - 1; row > 0; row--) {
+                for (int col = columns - 1; col > 0; col--) {
+                    Coordinate coordinate = new Coordinate(row, col);
+                    CellState state = getCell(coordinate);
+                    if (state != CellState.UNUSED) {
+                        if (state == CellState.FILLED) {
+                            three.set(i, true);
+                        } else {
+                            three.set(i, false);
+                        }
+                        i++;
+                    }
+                }
+            }
+            bitSets.add(three);
+
+            i = 0;
+            BitSet four = new BitSet(33);
+            for (int col = 0; col < columns; col++) {
+                for (int row = rows - 1; row > 0; row--) {
+                    Coordinate coordinate = new Coordinate(row, col);
+                    CellState state = getCell(coordinate);
+                    if (state != CellState.UNUSED) {
+                        if (state == CellState.FILLED) {
+                            four.set(i, true);
+                        } else {
+                            four.set(i, false);
+                        }
+                        i++;
+                    }
+                }
+            }
+            bitSets.add(four);
+
+            i = 0;
+            BitSet five = new BitSet(33);
+            for (int col = 0; col < columns; col++) {
+                for (int row = 0; row < rows; row++) {
+                    Coordinate coordinate = new Coordinate(row, col);
+                    CellState state = getCell(coordinate);
+                    if (state != CellState.UNUSED) {
+                        if (state == CellState.FILLED) {
+                            five.set(i, true);
+                        } else {
+                            five.set(i, false);
+                        }
+                        i++;
+                    }
+                }
+            }
+            bitSets.add(five);
+
+            i = 0;
+            BitSet six = new BitSet(33);
+            for (int row = rows - 1; row > 0; row--) {
+                for (int col = 0; col < columns; col++) {
+                    Coordinate coordinate = new Coordinate(row, col);
+                    CellState state = getCell(coordinate);
+                    if (state != CellState.UNUSED) {
+                        if (state == CellState.FILLED) {
+                            six.set(i, true);
+                        } else {
+                            six.set(i, false);
+                        }
+                        i++;
+                    }
+                }
+            }
+            bitSets.add(six);
+
+            i = 0;
+            BitSet seven = new BitSet(33);
+            for (int col = columns - 1; col > 0; col--) {
+                for (int row = rows - 1; row > 0; row--) {
+                    Coordinate coordinate = new Coordinate(row, col);
+                    CellState state = getCell(coordinate);
+                    if (state != CellState.UNUSED) {
+                        if (state == CellState.FILLED) {
+                            seven.set(i, true);
+                        } else {
+                            seven.set(i, false);
+                        }
+                        i++;
+                    }
+                }
+            }
+            bitSets.add(seven);
+
+            i = 0;
+            BitSet eight = new BitSet(33);
+            for (int row = rows - 1; row > 0; row--) {
+                for (int col = 0; col < columns; col++) {
+                    Coordinate coordinate = new Coordinate(row, col);
+                    CellState state = getCell(coordinate);
+                    if (state != CellState.UNUSED) {
+                        if (state == CellState.FILLED) {
+                            eight.set(i, true);
+                        } else {
+                            eight.set(i, false);
+                        }
+                        i++;
+                    }
+                }
+            }
+            bitSets.add(eight);
+
+            return bitSets.first();
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -462,13 +623,13 @@ public class hiq {
                     columns == board.columns &&
                     numberOfPegs == board.numberOfPegs &&
                     emptySpace == board.emptySpace &&
-                    Arrays.deepEquals(cells, board.cells);
+                    toBitSet().equals(board.toBitSet());
         }
 
         @Override
         public int hashCode() {
             int result = Objects.hash(rows, columns, numberOfPegs, emptySpace);
-            result = 31 * result + Arrays.deepHashCode(cells);
+            result = 31 * result + toBitSet().hashCode();
             return result;
         }
     }
@@ -504,36 +665,38 @@ public class hiq {
                     '}';
         }
     }
-//
-//    static class Output {
-//        final String result;
-//
-//        Output(String result) {
-//            this.result = result;
-//        }
-//
-//        String toFormattedString() {
-//            return result;
-//        }
-//    }
 
     static class Output {
         final char c;
-        final List<Move> moves;
+        final String result;
 
-        Output(final char c, List<Move> moves) {
+        Output(char c, String result) {
             this.c = c;
-            this.moves = moves;
+            this.result = result;
         }
 
         String toFormattedString() {
-            if (moves == null) {
-                return "No Solution for hole at " + c;
-            } else {
-                return moves.toString();
-            }
+            return result;
         }
     }
+
+//    static class Output {
+//        final char c;
+//        final List<Move> moves;
+//
+//        Output(final char c, List<Move> moves) {
+//            this.c = c;
+//            this.moves = moves;
+//        }
+//
+//        String toFormattedString() {
+//            if (moves == null) {
+//                return "No Solution for hole at " + c;
+//            } else {
+//                return moves.toString();
+//            }
+//        }
+//    }
 
     static class Input {
         char startingPosition;
